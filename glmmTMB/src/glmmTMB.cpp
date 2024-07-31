@@ -332,21 +332,24 @@ Type termwise_nll(array<Type> &U, vector<Type> theta, per_term_info<Type>& term,
          }
     }
 
-    // // Replace -99 and compute new values
-    // for (int i = 1; i < n; i++) {
-        // for (int j = 0; j < i; j++) {
-            // if (theta_cov_mat(i, j) > 998) {
-                // if (j == 0) {
-                    // theta_cov_mat(i, j) = 0;  // First column exception
-                // } else if (j > 0) {
-                    // double Ljj = theta_cov_mat(j, j);
-                    // double sum_term = theta_cov_mat.block(i, 0, 1, j).dot(theta_cov_mat.block(j, 0, 1, j));
-                    // double Lij = (0 - sum_term) / Ljj;
-                    // theta_cov_mat(i, j) = Lij;
-                // }
-            // }
-        // }
-    // }
+    // // Replace 998 and compute new values
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (theta_cov_mat(i, j) > 998) {
+                if (j == 0) {
+                    theta_cov_mat(i, j) = 0;  // First column exception
+                } else if (j > 0) {
+                    double Ljj = theta_cov_mat(j, j);
+                    double sum_term = 0.0;
+						for (int k = 0; k < j; k++) {
+							sum_term += theta_cov_mat(i, k) * theta_cov_mat(j, k);
+						}
+                    double Lij = (0 - sum_term) / Ljj;
+                    theta_cov_mat(i, j) = Lij;
+                }
+            }
+        }
+    }
 	
 	// cnt = 0;
 	// for (int i = 1; i < n; i++) {
