@@ -352,13 +352,13 @@ Type termwise_nll(array<Type> &U, vector<Type> theta, per_term_info<Type>& term,
         }
     }
 	
-	// cnt = 0;
-	// for (int i = 1; i < n; i++) {
-		// for (int j = 0; j < i; j++) {
-			// corr_transf[cnt] = theta_cov_mat(i, j);
-			// cnt++;
-		// }
-	// }
+	cnt = 0;
+	 for (int i = 1; i < n; i++) {
+		for (int j = 0; j < i; j++) {
+			 corr_transf[cnt] = theta_cov_mat(i, j);
+			 cnt++;
+		}
+	}
 	
     density::UNSTRUCTURED_CORR_t<Type> nldens(corr_transf);
     density::VECSCALE_t<density::UNSTRUCTURED_CORR_t<Type> > scnldens = density::VECSCALE(nldens, sd);
