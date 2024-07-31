@@ -335,7 +335,7 @@ Type termwise_nll(array<Type> &U, vector<Type> theta, per_term_info<Type>& term,
     // Replace -99 and compute new values
     for (int i = 1; i < n; i++) {
         for (int j = 0; j < i; j++) {
-            if (theta_cov_mat(i, j) == -99) {
+            if (theta_cov_mat(i, j) > 999) {
                 if (j == 0) {
                     theta_cov_mat(i, j) = 0;  // First column exception
                 } else if (j > 0) {
