@@ -315,7 +315,51 @@ Type termwise_nll(array<Type> &U, vector<Type> theta, per_term_info<Type>& term,
     vector<Type> corr_transf = theta.tail(theta.size() - n);
     vector<Type> sd = exp(logsd);
 	
+	// // this is what I added:
+	matrix<Type> theta_cov_mat(n,n); 
+    
+	
+    // // Fill the diagonal with 1s - this can probably be done in an easier way
+    for (int i = 0; i < n; i++) {
+         theta_cov_mat(i, i) = 1;
+    }
+	int cnt = 0;
+    // Fill the lower triangle of the matrix
+    for (int i = 1; i < n; i++) {
+         for (int j = 0; j < i; j++) {
+             theta_cov_mat(i, j) = corr_transf[cnt];
+             cnt++;
+         }
+    }
 
+    // Replace values larger than 999 and compute new values
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (theta_cov_mat(i, j) > 998) {
+                if (j == 0) {
+                    theta_cov_mat(i, j) = 0;  // First column exception; value of theta in lower diagonal of cholesky corresponds to correlation value
+                } else if (j > 0) {
+                    Type Ljj = theta_cov_mat(j, j); // will be one in the case of a correlation matrix
+                    Type sum_term = 0.0; //
+					Type pm = 0.0;	 // according to Pinkney can be any value between -1 and 1, but my tests do not confirm this
+						for (int k = 0; k < j; k++) {
+							sum_term += theta_cov_mat(i, k) * theta_cov_mat(j, k);//
+						}
+                    Type Lij = (pm - sum_term) / Ljj;//
+                    theta_cov_mat(i, j) = Lij;//
+                }
+            }
+        }
+    }
+	
+	cnt = 0;
+	 for (int i = 1; i < n; i++) {
+		for (int j = 0; j < i; j++) {
+			 corr_transf[cnt] = theta_cov_mat(i, j);
+			 cnt++;
+		}
+	}
+	
     density::UNSTRUCTURED_CORR_t<Type> nldens(corr_transf);
     density::VECSCALE_t<density::UNSTRUCTURED_CORR_t<Type> > scnldens = density::VECSCALE(nldens, sd);
     for(int i = 0; i < term.blockReps; i++){
