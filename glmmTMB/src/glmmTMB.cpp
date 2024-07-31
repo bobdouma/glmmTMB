@@ -341,7 +341,7 @@ Type termwise_nll(array<Type> &U, vector<Type> theta, per_term_info<Type>& term,
                 } else if (j > 0) {
                     double Ljj = theta_cov_mat(j, j); //
                     double sum_term = 0.0; //
-					// double pm = 0.0;	 //
+					double pm = 0.0;	 //
 						for (int k = 0; k < j; k++) {
 							sum_term += theta_cov_mat(i, k) * theta_cov_mat(j, k);//
 						}
