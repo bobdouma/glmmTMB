@@ -316,21 +316,21 @@ Type termwise_nll(array<Type> &U, vector<Type> theta, per_term_info<Type>& term,
     vector<Type> sd = exp(logsd);
 	
 	// // this is what I added:
-	// matrix<Type> theta_cov_mat(n,n); 
+	matrix<Type> theta_cov_mat(n,n); 
     
-	// int cnt = 0;
+	
     // // Fill the diagonal with 1s
-    // for (int i = 0; i < n; i++) {
-        // theta_cov_mat(i, i) = 1;
-    // }
-
-    // // Fill the lower triangle of the matrix
-    // for (int i = 1; i < n; i++) {
-        // for (int j = 0; j < i; j++) {
-            // theta_cov_mat(i, j) = corr_transf[cnt];
-            // cnt++;
-        // }
-    // }
+    for (int i = 0; i < n; i++) {
+         theta_cov_mat(i, i) = 1;
+    }
+	int cnt = 0;
+    // Fill the lower triangle of the matrix
+    for (int i = 1; i < n; i++) {
+         for (int j = 0; j < i; j++) {
+             theta_cov_mat(i, j) = corr_transf[cnt];
+             cnt++;
+         }
+    }
 
     // // Replace -99 and compute new values
     // for (int i = 1; i < n; i++) {
